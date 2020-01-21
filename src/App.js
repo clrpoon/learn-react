@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import ProductGrid from './Components/ProductGrid'; 
+
 
 const App = () => {
   const [data, setData] = useState({});
@@ -13,9 +15,7 @@ const App = () => {
   }, []);
 
   return (
-    <ul>
-      {products.map(product => <li key={product.sku}>{product.title}</li>)}
-    </ul>
+    <ProductGrid products={products} />
   );
 };
 
