@@ -4,7 +4,7 @@ import { List, Title } from 'rbx';
 import ShoppingCartCard from './ShoppingCartCard'
 
 
-const ShoppingCart = ({ cartItems}) => {
+const ShoppingCart = ({ cartItems, rmvFromCart }) => {
     const shoppingcartstyle = {
         padding: "60px"
       };
@@ -18,6 +18,7 @@ const ShoppingCart = ({ cartItems}) => {
                     product={item.product}
                     qty={item.qty}
                     size={item.size}
+                    rmvFromCart={rmvFromCart}
                 />)
                 }
             </List>
