@@ -3,10 +3,11 @@ import 'rbx/index.css';
 import { Container, Column } from 'rbx';
 import ProductCard from './ProductCard';
 
-const ProductGrid = ({ products }) => {
+const ProductGrid = ({ products, setCartOpen, addToCart }) => {
   return (
-    <Container id="card-grid">
-      <Column.Group vcentered multiline >{products.map(product => <ProductCard key={product.sku} product={product} />)}</Column.Group>
+    <Container >
+      <Column.Group vcentered multiline >
+        {products.map(product => <ProductCard product={product} setCartOpen={setCartOpen} addToCart={addToCart}/>)}</Column.Group>
     </Container>
   );
 };
