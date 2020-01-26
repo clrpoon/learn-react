@@ -4,7 +4,8 @@ import 'rbx/index.css';
 import { Card, Image, Title, Column, Button } from 'rbx';
 
 
-const ProductCard = ({ product, addToCart, setCartOpen }) => {
+const ProductCard = ({ product, addToCart, setCartOpen, isInStock }) => {
+  console.log(product.sku)
     return (
       <Column size="one-fifth">
         <Card raised>
@@ -18,10 +19,10 @@ const ProductCard = ({ product, addToCart, setCartOpen }) => {
             <p size={2}>{product.description} </p>
             <p size={2}>{`$${product.price.toFixed(2)}`} </p>
             <Button.Group>
-                <Button onClick ={() => addToCart(product, 'S', setCartOpen)}>S</Button>
-                <Button onClick ={() => addToCart(product, 'M', setCartOpen)}>M</Button>
-                <Button onClick ={() => addToCart(product, 'L', setCartOpen)}>L</Button>
-                <Button onClick ={() => addToCart(product, 'XL', setCartOpen)}>XL</Button>
+                <Button disabled={!isInStock(product, 'S')} onClick ={() => addToCart(product, 'S', setCartOpen)}>S</Button>
+                <Button disabled={!isInStock(product, 'M')} onClick ={() => addToCart(product, 'M', setCartOpen)}>M</Button>
+                <Button disabled={!isInStock(product, 'L')} onClick ={() => addToCart(product, 'L', setCartOpen)}>L</Button>
+                <Button disabled={!isInStock(product, 'XL')} onClick ={() => addToCart(product, 'XL', setCartOpen)}>XL</Button>
             </Button.Group>
           </Card.Content>
         </Card>

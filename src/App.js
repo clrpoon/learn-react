@@ -3,10 +3,52 @@ import { Image, Button, Navbar } from 'rbx';
 import ProductGrid from './Components/ProductGrid'; 
 import ShoppingCart from './Components/ShoppingCart'
 import Sidebar from "react-sidebar"
+import firebase from 'firebase/app';
+import 'firebase/database';
+
+var firebaseConfig = {
+  apiKey: "AIzaSyCErUtGJ_IAWf2BJuIdUjvnpLTsT4cvRGo",
+  authDomain: "learnreact-67a27.firebaseapp.com",
+  databaseURL: "https://learnreact-67a27.firebaseio.com",
+  projectId: "learnreact-67a27",
+  storageBucket: "learnreact-67a27.appspot.com",
+  messagingSenderId: "1057988748661",
+  appId: "1:1057988748661:web:4689e6d5ddbd0b214b9f3c",
+  measurementId: "G-ZT7HTKENMW"
+};
+
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database().ref();
 
 const App = () => {
   const [data, setData] = useState({});
   const products = Object.values(data);
+   
+  // database inventory keeping
+  const [inventory, setInventory] = useState({});
+
+  const isInStock = (product, size) =>{
+    for (var i = 0; i < Object.keys(inventory).length; i++)
+    {
+      var curSku = Object.keys(inventory)[i]  
+      if (parseInt(curSku) === product.sku) {
+        var sizesInStock = inventory[parseInt(curSku)]
+        return sizesInStock[size] > 0 ? true: false
+      }
+    }
+    return false
+  }
+  useEffect(() => {
+    const handleData = snap => {
+      if (snap.val()) 
+      {
+        console.log(snap.val())
+        setInventory(snap.val());
+      }
+    };
+    db.on("value", handleData, error => alert(error));
+    return () => { db.off("value", handleData);};
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -16,7 +58,7 @@ const App = () => {
     };
     fetchProducts();
   }, []);
-
+  
   // CART LOGIC
   const [cartOpen, setCartOpen] = useState(false); //sidebar collaspe states
   const [cartItems, setCartItems] = useState([]); //cart items state
@@ -53,7 +95,8 @@ const App = () => {
     setCartItems(newCartItems);
   };
 
-  // root
+
+  // app root
   return (
     <React.Fragment>
       <Sidebar
@@ -77,7 +120,8 @@ const App = () => {
       <ProductGrid 
         products={products} 
         setCartOpen={setCartOpen} 
-        addToCart={addToCart}/>
+        addToCart={addToCart}
+        isInStock={isInStock}/>
     </Sidebar>
     </React.Fragment>
   );
