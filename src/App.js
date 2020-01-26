@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Image, Button, Navbar } from 'rbx';
+import { Image, Button, Navbar, Title, Message } from 'rbx';
 import ProductGrid from './Components/ProductGrid'; 
 import ShoppingCart from './Components/ShoppingCart'
 import Sidebar from "react-sidebar"
 import firebase from 'firebase/app';
 import 'firebase/database';
+import 'firebase/auth';
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
 var firebaseConfig = {
   apiKey: "AIzaSyCErUtGJ_IAWf2BJuIdUjvnpLTsT4cvRGo",
@@ -95,6 +97,46 @@ const App = () => {
     setCartItems(newCartItems);
   };
 
+  //authentication
+  const [user, setUser] = useState(null);
+  
+  const uiConfig = {
+    signInFlow: 'popup',
+    signInOptions: [
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID
+    ],
+    callbacks: {
+      signInSuccessWithAuthResult: () => false
+    }
+  };
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(setUser);
+  }, []);
+
+  const Banner = ({ user, title }) => (
+    <React.Fragment>
+      { user ? <Welcome user={ user } /> : <SignIn /> }
+      <Title>{ 'Shopping Cart' }</Title>
+    </React.Fragment>
+  );
+  const Welcome = ({ user }) => (
+    <Message color="info">
+      <Message.Header>
+        Welcome, {user.displayName}
+        <Button primary onClick={() => firebase.auth().signOut()}>
+          Log out
+        </Button>
+      </Message.Header>
+    </Message>
+  );
+
+  const SignIn = () => (
+    <StyledFirebaseAuth
+      uiConfig={uiConfig}
+      firebaseAuth={firebase.auth()}
+    />
+  );
+
 
   // app root
   return (
@@ -110,6 +152,7 @@ const App = () => {
         pullRight={true}
       >
       <Navbar>
+      <Banner title={ 'Shopping Cart' } user={ user } />
         <Navbar.Segment align="end">
         { cartOpen?
           ( <Button> <Image onClick ={() => setCartOpen(false)} src={'data/icons/cart.png'} /> </Button>):
